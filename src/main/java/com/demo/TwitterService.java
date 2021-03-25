@@ -19,11 +19,9 @@ import twitter4j.TwitterFactory;
 @Service
 public class TwitterService {
 
-	/** The stream feed. */
 	@Autowired
 	private TwitterStreamService streamFeed;
 
-	/** The repo. */
 	@Autowired
 	private TwitterRepository repo;
 

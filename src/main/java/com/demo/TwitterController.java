@@ -25,7 +25,6 @@ import twitter4j.TwitterException;
 @RequestMapping("/v1/tweets")
 public class TwitterController {
 
-	/** The service. */
 	@Autowired
 	private TwitterService service;
 

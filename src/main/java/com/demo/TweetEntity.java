@@ -28,21 +28,13 @@ public class TweetEntity implements Serializable {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
-	/** The id. */
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	/** The user. */
 	private String user;
-
-	/** The text. */
 	private String text;
-
-	/** The location. */
 	private String location;
-
-	/** The validate. */
 	private boolean validate;
 
 	/**
