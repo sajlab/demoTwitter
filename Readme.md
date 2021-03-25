@@ -13,6 +13,7 @@
 * mvn spring-boot:run
 
 # Swagger
-* The microservice is documented via swagger after the microservice is started.
+* Documentation is provided via swagger
 * Swagger allows you to make requests through your browser
+* The microservice must be started.
 * http://localhost:8080/swagger-ui.html
