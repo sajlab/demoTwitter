@@ -18,19 +18,32 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+
+/**
+ * The Class DemoTwitterApplication.
+ */
 @SpringBootApplication
 @EnableSwagger2
 public class DemoTwitterApplication {
 	
+	/** The service. */
 	@Autowired
 	private TwitterStreamService service;
 	
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args)  {
 		SpringApplication.run(DemoTwitterApplication.class, args);
 	}
 	
+	/**
+	 * Run Twitter Stream service after startup.
+	 */
 	@EventListener(ApplicationReadyEvent.class)
-	public void doSomethingAfterStartup() {
+	public void runTwitterStreamService() {
 	    if (service != null) {
 	    	service.run();
 	    }
@@ -46,7 +59,12 @@ public class DemoTwitterApplication {
 //
 //	}
 
-	@Bean
+	/**
+ * Api.
+ *
+ * @return the docket
+ */
+@Bean
 	public Docket api() {
 		return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo()).pathMapping("/").select() // select those paths and api will generate document
 				.apis(RequestHandlerSelectors.any()) // Monitor all APIs
@@ -57,6 +75,11 @@ public class DemoTwitterApplication {
 	}
 
 
+	/**
+	 * Api info.
+	 *
+	 * @return the api info
+	 */
 	private ApiInfo apiInfo() {
 		return new ApiInfoBuilder().title("Test twitter Interface Document")
 				// .contact(new Contact("rongrong", "", "2250454190@qq.com"))

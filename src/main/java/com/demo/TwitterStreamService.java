@@ -1,7 +1,5 @@
 package com.demo;
 
-import java.nio.charset.StandardCharsets;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +13,9 @@ import twitter4j.StatusListener;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 
+/**
+ * The Class TwitterStreamService.
+ */
 @Service
 public class TwitterStreamService {
 
@@ -25,28 +26,35 @@ public class TwitterStreamService {
 	@Autowired
 	private TwitterRepository repo;
 	
+	/**
+	 * Run.
+	 */
 	public void run() {
 		if (running) {return;}
 		
+	    TwitterStream twitterStream = new TwitterStreamFactory().getInstance();
+	    twitterStream.addListener(getListener());
+	    twitterStream.sample();
+	    twitterStream.filter(new FilterQuery("*", " ").language("es","fr","it").follow(1500l));
+	    
+	    
+	    Runtime.getRuntime().addShutdownHook(
+	            new Thread(() -> {
+	              twitterStream.shutdown();
+	            }));
+	    
+	    running = Boolean.TRUE;
+	}
+	
+	/**
+	 * Gets the listener.
+	 *
+	 * @return the listener
+	 */
+	private StatusListener getListener() {
 		StatusListener listener = new StatusListener(){
 	        public void onStatus(Status status) {
-		            TweetEntity tweet = new TweetEntity();
-		            tweet.setLocation(status.getUser().getLocation());
-		            
-		            String text;
-		            if(status.getText().length() > 255 ){
-		                text = status.getText().substring(0, 254);
-		            } else {
-		            	text = status.getText();
-		            }
-		            tweet.setId(status.getId());
-		            tweet.setText(new String(text.getBytes(StandardCharsets.UTF_8)));
-		            try {
-		            	tweet.setUser(new String(status.getUserMentionEntities()[0].getScreenName().getBytes(StandardCharsets.UTF_8)));
-		            } catch (Exception e) {
-		            	tweet.setUser(new String(status.getUser().getName().getBytes(StandardCharsets.UTF_8)));
-		            }
-		            repo.save(tweet);
+		            repo.save(TweetEntity.valueOf(status));
 	        }
 	        public void onDeletionNotice(StatusDeletionNotice statusDeletionNotice) {
 	        	// TODO Auto-generated method stub
@@ -68,18 +76,6 @@ public class TwitterStreamService {
 
 			}
 	    };
-		
-	    TwitterStream twitterStream = new TwitterStreamFactory().getInstance();
-	    
-	    twitterStream.addListener(listener);
-	    twitterStream.sample();
-	    twitterStream.filter(new FilterQuery("*", " ").language("es","fr","it").follow(1500l));
-	    
-	    Runtime.getRuntime().addShutdownHook(
-	            new Thread(() -> {
-	              twitterStream.shutdown();
-	            }));
-	    
-	    running = Boolean.TRUE;
+	    return listener;
 	}
 }
