@@ -38,6 +38,7 @@ public class TwitterController {
 			@ApiResponse(code = 500, message = "Internal server error")})
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<TweetEntity>> getTweets(){
+		streamFeed.run();
 		return new ResponseEntity<>(repo.findAll(), HttpStatus.OK);
 	}
 
@@ -48,6 +49,7 @@ public class TwitterController {
 			@ApiResponse(code = 500, message = "Internal server error")})
 	@GetMapping(value ="/{user}",produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<TweetEntity>> getTweetsByUser(@PathVariable final String user){
+		streamFeed.run();
 		List<TweetEntity> result = repo.findAllByUserAndValidate(user, Boolean.TRUE);
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
@@ -61,6 +63,7 @@ public class TwitterController {
 	@PutMapping(value = "/{idTweet}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> validateTweet(@PathVariable final String idTweet) {
 		try {
+			streamFeed.run();
 			Optional<TweetEntity> optionalTweet = repo.findById(Long.valueOf(idTweet));
 			if (optionalTweet.isPresent()) {
 				optionalTweet.get().setValidate(Boolean.TRUE);
@@ -95,18 +98,6 @@ public class TwitterController {
 
 		List<String> result =  Arrays.stream(trends.getTrends()).map(trend->trend.getName()).limit(topHashtags).collect(Collectors.toList());
 		return new ResponseEntity<>(result, HttpStatus.OK);
-	}
-
-	@ApiOperation(value = "Run feed tweets", notes = "Start to popullate database with tweets")
-	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Success"),
-			@ApiResponse(code = 400, message = "Bad Request"),
-			@ApiResponse(code = 404, message = "Not Found"),
-			@ApiResponse(code = 500, message = "Technical Error")})
-	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Void> run() {
-		streamFeed.run();
-		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 }

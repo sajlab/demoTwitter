@@ -1,10 +1,14 @@
 package com.demo;
 
 
-import com.google.common.base.Predicates;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.event.EventListener;
+
+import com.google.common.base.Predicates;
 
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -18,9 +22,19 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class DemoTwitterApplication {
 	
+	@Autowired
+	private TwitterStreamService service;
+	
 	public static void main(String[] args)  {
 		SpringApplication.run(DemoTwitterApplication.class, args);
 	}
+	
+	@EventListener(ApplicationReadyEvent.class)
+	public void doSomethingAfterStartup() {
+	    if (service != null) {
+	    	service.run();
+	    }
+	}	
 
 	
 //	@Bean
