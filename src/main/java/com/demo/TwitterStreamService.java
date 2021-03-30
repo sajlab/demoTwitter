@@ -60,7 +60,7 @@ public class TwitterStreamService {
 	
 
 	/**
-	 * Run Twitter Stream service after startup.
+	 * Save tweet.
 	 */
 	
 	private void saveEntity(Status status) {
