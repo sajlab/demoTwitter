@@ -9,7 +9,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import twitter4j.Status;
 import twitter4j.TwitterStreamFactory;
@@ -22,7 +21,6 @@ import twitter4j.TwitterStreamFactory;
 public class TwitterStreamService {
 
 	@Getter
-	@Setter
 	private boolean running;
 
 	@Autowired
