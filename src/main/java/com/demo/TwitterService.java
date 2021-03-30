@@ -20,7 +20,7 @@ import twitter4j.TwitterFactory;
 public class TwitterService {
 
 	@Autowired
-	private TwitterStreamService streamFeed;
+	private TwitterStreamService streamService;
 
 	@Autowired
 	private TwitterRepository repo;
@@ -31,7 +31,7 @@ public class TwitterService {
 	 * @return the list
 	 */
 	public List<TweetEntity> findAll() {
-		streamFeed.run();
+		streamService.run();
 		return repo.findAll();
 	}
 
@@ -42,7 +42,7 @@ public class TwitterService {
 	 * @return the list
 	 */
 	public List<TweetEntity> findAllByUserAndValidate(String user) {
-		streamFeed.run();
+		streamService.run();
 		return repo.findAllByUserAndValidate(user, Boolean.TRUE);
 	}
 
@@ -54,7 +54,7 @@ public class TwitterService {
 	 */
 	public boolean validate(String idTweet) {
 		boolean result = false;
-		streamFeed.run();
+		streamService.run();
 		Optional<TweetEntity> optionalTweet = repo.findById(Long.valueOf(idTweet));
 		if (optionalTweet.isPresent()) {
 			optionalTweet.get().setValidate(Boolean.TRUE);
@@ -65,7 +65,7 @@ public class TwitterService {
 	}
 
 	/**
-	 * Top trending.
+	 * Top trending. Default value 10
 	 *
 	 * @param top the top
 	 * @return the list
@@ -80,12 +80,6 @@ public class TwitterService {
 			;
 		}
 
-		TwitterFactory tf = new TwitterFactory();
-		Twitter twitter = tf.getInstance();
-		Trends trends = twitter.getPlaceTrends(1);
-
-		return Arrays.stream(trends.getTrends()).map(trend -> trend.getName()).limit(topHashtags)
-				.collect(Collectors.toList());
-
+		return streamService.topTrending(topHashtags);
 	}
 }
