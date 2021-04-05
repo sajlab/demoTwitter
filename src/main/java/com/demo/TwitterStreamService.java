@@ -32,6 +32,8 @@ public class TwitterStreamService {
 	private TwitterRepository repo;
 	
 	private List<String> languages = Arrays.asList(new String[]{"es", "fr", "it"});
+	
+	private int FOLLOWERS_ALLOWED = 1500;
 
 	
 	/**
@@ -70,14 +72,23 @@ public class TwitterStreamService {
 		if (status == null) return;
 		
 		try {
-			boolean language = languages.contains(status.getLang());
-			if (language && status.getUser().getFollowersCount() >= 1500) {
+			if (isAllowedLanguageAndFollowers(status)) {
 //				log.debug(TweetEntity.valueOf(status).toString());
 				repo.save(TweetEntity.valueOf(status));
 			}
 		} catch (Exception e) {
 			log.debug(e.toString());
 		}
+	}
+
+	/**
+	 * Is allowed language and followers
+	 * @param status
+	 * @return
+	 */
+	private boolean isAllowedLanguageAndFollowers(Status status) {
+		boolean language = languages.contains(status.getLang());
+		return language && status.getUser().getFollowersCount() >= FOLLOWERS_ALLOWED;
 	}
 	
 	/**

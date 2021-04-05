@@ -71,15 +71,12 @@ public class TwitterController {
 			@ApiResponse(code = 500, message = "Technical Error") })
 	@PutMapping(value = "/{idTweet}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> validateTweet(@PathVariable final String idTweet) {
-		try {
-			if (service.validate(idTweet)) {
-				return new ResponseEntity<>(HttpStatus.OK);
-			}
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		
+		if (service.validate(idTweet)) {
+			return new ResponseEntity<>(HttpStatus.OK);
 		}
-
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		
 	}
 
 	/**

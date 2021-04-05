@@ -6,12 +6,14 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
 import twitter4j.TwitterException;
 
 /**
  * The Class TwitterService.
  */
 @Service
+@Slf4j
 public class TwitterService {
 
 	@Autowired
@@ -50,11 +52,15 @@ public class TwitterService {
 	public boolean validate(String idTweet) {
 		boolean result = false;
 		streamService.run();
-		Optional<TweetEntity> optionalTweet = repo.findById(Long.valueOf(idTweet));
-		if (optionalTweet.isPresent()) {
-			optionalTweet.get().setValidate(Boolean.TRUE);
-			repo.save(optionalTweet.get());
-			result = true;
+		try {
+			Optional<TweetEntity> optionalTweet = repo.findById(Long.valueOf(idTweet));
+			if (optionalTweet.isPresent()) {
+				optionalTweet.get().setValidate(Boolean.TRUE);
+				repo.save(optionalTweet.get());
+				result = true;
+			}
+		} catch(Exception e) {
+			log.debug(e.toString());
 		}
 		return result;
 	}
